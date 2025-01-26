@@ -13,19 +13,16 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Skeleton } from "@/components/ui/skeleton"
 
-export default function Notes() {
+export default function Note() {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <Skeleton key={i} className="aspect-square rounded-xl bg-gray-300" />
-            ))}
-          </div>
+        <HeaderNote />
+        <div className="flex flex-1 flex-col gap-4 px-4 py-10">
+          <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
+          <div className="mx-auto h-full w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
         </div>
       </SidebarInset>
     </SidebarProvider>
