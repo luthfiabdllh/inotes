@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,13 +13,54 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useAuth } from "@/hooks/jwtAuth";
+
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { push } = useRouter();
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    try{
+      const res = await signIn("credentials", {
+        email: e.target.email.value,
+        password: e.target.password.value,
+        redirect: false,
+        callbackUrl: "/",
+      })
+      if (!res?.error) {
+        e.target.reset();
+        setSuccess(true);
+        push("/");
+      } else {
+        setError(res.error);
+        console.log(res.error);
+        e.target.reset();
+        setLoading(false);
+      }
+    } catch (error) {
+          setError("An error occurred");
+          console.error(error);
+          e.target.reset();
+          setLoading(false);
+        }
+      }
+
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      {error && <div className="mx-auto -mb-3 text-red-600">{error}</div>}
+      {success && <div className="mx-auto -mb-3 text-green-600">Registration successful!</div>}
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -26,7 +69,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={(e) => handleLogin(e)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -43,8 +86,8 @@ export function LoginForm({
                 </div>
                 <Input id="password" type="password" required />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Login..." : "Login"}
               </Button>
               <Button variant="outline" className="w-full">
                 <Image src="/image/ic_google.svg" alt="Google Icon" width={20} height={20} />

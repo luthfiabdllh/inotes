@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
 import { CommandDialogDemo } from "./command-dialog"
+import { useSession } from "next-auth/react"
 
 // This is sample data.
 const data = {
@@ -247,6 +248,14 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const { data: session } = useSession();
+  const user = {
+    name: session?.user?.name ?? "",
+    email: session?.user?.email ?? "",
+    avatar: "/image/ic_user.svg",
+  }
+  
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
@@ -259,7 +268,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
