@@ -26,32 +26,36 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const { login, isLoading, errorAuth } = useAuth();
   const [success, setSuccess] = useState<boolean>(false);
   const { push } = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-  
-    try {
-      await login({
-        email: formData.email,
-        password: formData.password,
-      });
-  
-      setSuccess(true);
-      setLoading(false);
+    try{
+      const res = await signIn("credentials", {
+        email: e.target.email.value,
+        password: e.target.password.value,
+        redirect: false,
+        callbackUrl: "/",
+      })
+      if (!res?.error) {
+        e.target.reset();
+        setSuccess(true);
+        push("/");
+      } else {
+        setError(res.error);
+        console.log(res.error);
+        e.target.reset();
+        setLoading(false);
+      }
     } catch (error) {
-      setError("Login failed. Please try again.");
-      console.error(error);
-      setLoading(false);
-    }
-  };  
+          setError("An error occurred");
+          console.error(error);
+          e.target.reset();
+          setLoading(false);
+        }
+      }
 
 
   return (
@@ -74,7 +78,6 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
               </div>
@@ -82,11 +85,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input 
-                id="password" 
-                type="password" 
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required />
+                <Input id="password" type="password" required />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Login..." : "Login"}
