@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import api from '../utils/axios';
-import { useRouter } from 'next/router';
+"use client";
+
+import { useState } from "react";
+import api from "../utils/axios";
+import { useRouter } from "next/navigation";
 
 interface LoginData {
   email: string;
@@ -16,27 +18,27 @@ export const useAuth = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Hit endpoint login di backend
-      const response = await api.post('/auth/login', data);
-      
+      const response = await api.post("/auth/login", data);
+
       // Simpan token dari response backend
       const { token } = response.data;
-      localStorage.setItem('token', token);
-      
+      localStorage.setItem("token", token);
+
       // Redirect ke dashboard setelah login
-      router.push('/dashboard');
+      router.push("/");
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    router.push('/login');
+    localStorage.removeItem("token");
+    router.push("/login");
   };
 
-  return { login, logout, isLoading, error };
+  return { login, logout, isLoading, errorAuth: error };
 };
