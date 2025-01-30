@@ -23,9 +23,12 @@ import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { NavUser } from "./nav-user"
+import { CommandDialogDemo } from "./command-dialog"
 
 // This is sample data.
 const data = {
@@ -51,35 +54,20 @@ const data = {
       title: "Search",
       url: "#",
       icon: Search,
+      component: <CommandDialogDemo />
     },
     {
       title: "Home",
-      url: "#",
+      url: "/",
       icon: Home,
       isActive: true,
-    },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-      badge: "10",
     },
   ],
   navSecondary: [
     {
-      title: "Calendar",
-      url: "#",
-      icon: Calendar,
-    },
-    {
       title: "Settings",
       url: "#",
       icon: Settings2,
-    },
-    {
-      title: "Templates",
-      url: "#",
-      icon: Blocks,
     },
     {
       title: "Trash",
@@ -144,6 +132,11 @@ const data = {
       emoji: "✅",
     },
   ],
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
   workspaces: [
     {
       name: "Personal Life Management",
@@ -265,6 +258,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavWorkspaces workspaces={data.workspaces} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

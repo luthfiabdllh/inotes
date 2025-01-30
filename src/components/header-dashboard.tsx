@@ -5,8 +5,9 @@ import { SidebarTrigger } from "./ui/sidebar"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "./ui/breadcrumb"
 import { NavActions } from "./nav-actions"
 import { Button } from "./ui/button"
+import { FilterDropdown } from "./filter-dropdown"
 
-export function HeaderNote() {
+export function HeaderDashboard() {
     return (
       <header className="flex h-14 shrink-0 items-center gap-2 border-b border-gray-200">
         <div className="flex flex-1 items-center gap-2 px-3">
@@ -15,15 +16,15 @@ export function HeaderNote() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbPage className="line-clamp-1" contentEditable suppressContentEditableWarning>
-                  Project Management & Task Tracking
+                <BreadcrumbPage>
+                  Dashboard
                 </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
         <div className="ml-auto px-3">
-          <NavActions />
+          <FilterDropdown />
         </div>
       </header>
     )

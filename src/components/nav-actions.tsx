@@ -17,7 +17,8 @@ import {
   Star,
   Trash,
   Trash2,
-  Share2
+  Share2,
+  Tag
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -35,12 +36,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import ToggleFavorite from "./toggle-favorite"
+import { ShareDialog } from "./share-dialog"
 
 const data = [
   [
     {
-      label: "Undo",
-      icon: CornerUpLeft,
+      label: "Tags",
+      icon: Tag,
     },
     {
       label: "Copy Link",
@@ -65,12 +68,8 @@ export function NavActions() {
       <div className="hidden font-medium text-neutral-500 md:inline-block dark:text-neutral-400">
         Edit Oct 08
       </div>
-      <Button variant="ghost" size="icon" className="h-7 w-7">
-        <Share2/>
-      </Button>
-      <Button variant="ghost" size="icon" className="h-7 w-7">
-        <Star />
-      </Button>
+      <ShareDialog />
+      <ToggleFavorite/>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button

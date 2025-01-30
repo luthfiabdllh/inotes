@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import Editor from "@/components/editor/editor"
 import { HeaderNote } from "@/components/header-note"
 import { NavActions } from "@/components/nav-actions"
 import {
@@ -20,10 +21,8 @@ export default function Note() {
       <AppSidebar />
       <SidebarInset>
         <HeaderNote />
-        <div className="flex flex-1 flex-col gap-4 px-4 py-10">
-          <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
-          <div className="mx-auto h-full w-full max-w-3xl rounded-xl bg-neutral-100/50 dark:bg-neutral-800/50" />
-        </div>
+        <Editor />
+        
       </SidebarInset>
     </SidebarProvider>
   )

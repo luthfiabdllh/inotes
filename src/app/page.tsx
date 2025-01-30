@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { HeaderDashboard } from "@/components/header-dashboard"
 import { HeaderNote } from "@/components/header-note"
 import { NavActions } from "@/components/nav-actions"
 import {
@@ -15,14 +16,15 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function Notes() {
+export default function Dashboard() {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+        <HeaderDashboard />
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-            {Array.from({ length: 20 }).map((_, i) => (
+          <div className="grid auto-rows-min gap-4 grid-cols-3 md:grid-cols-8">
+            {Array.from({ length: 18 }).map((_, i) => (
               <Skeleton key={i} className="aspect-square rounded-xl bg-gray-300" />
             ))}
           </div>
