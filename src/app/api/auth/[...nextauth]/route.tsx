@@ -66,7 +66,7 @@ export const authOptions = {
     }
   },
   pages: {
-    signIn: "/login", // Sesuaikan dengan halaman login di aplikasi Next.js
+    signIn: "/login", 
   },
   secret: "hewajesa",
 };

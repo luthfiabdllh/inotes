@@ -1,21 +1,39 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { HeaderDashboard } from "@/components/header-dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getSession } from "next-auth/react";
 
-async function getData() {
+async function fetchNotes() {
   try {
-    const res = await fetch("https://note-iota-two.vercel.app/api/notes");
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
+    const session = await getSession();
+
+    if (!session?.accessToken) {
+      throw new Error("Access token not found, please login again.");
     }
-    return res.json();
+
+    const res = await fetch("https://note-iota-two.vercel.app/api/notes", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch notes, status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log("API Response:", data); // Debugging untuk melihat data dari API
+
+    return data.data || []; // Pastikan kita hanya mengambil array dari data.data
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
+    console.error("Error fetching notes:", error);
+    return []; // Jika error, kembalikan array kosong agar tidak menyebabkan error saat `.map()`
   }
 }
 
@@ -24,15 +42,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchNotes() {
-      const data = await getData();
-      setNotes(data);
-      setLoading(false);
+    async function getNotes() {
+      try {
+        const data = await fetchNotes();
+        setNotes(data); // Simpan hasil API ke state
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false); // Hentikan loading setelah data diambil
+      }
     }
-    fetchNotes();
-  }, []);
 
-  
+    getNotes();
+  }, []); // Dipanggil hanya sekali saat komponen pertama kali dirender
 
   return (
     <SidebarProvider>
@@ -48,15 +70,17 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="grid auto-rows-min gap-4 grid-cols-3 md:grid-cols-8">
-              {notes.map((note) => (
-                <div
-                  key={note.id}
-                  className="p-4 bg-white shadow-md rounded-xl border"
-                >
-                  <h3 className="text-lg font-bold">{note.title}</h3>
-                  <p className="text-sm text-gray-600">{note.content}</p>
-                </div>
-              ))}
+              {notes.length > 0 ? (
+                notes.map((note) => (
+                  <div key={note.id} className="bg-white rounded-xl p-4 shadow-md">
+                    <h3 className="text-lg font-semibold">{note.title}</h3>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 col-span-3 md:col-span-8">
+                  No notes found.
+                </p>
+              )}
             </div>
           )}
         </div>
