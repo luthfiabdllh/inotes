@@ -2,6 +2,7 @@
 
 import {
   ArrowUpRight,
+  Clock,
   Link as LinkIC,
   MoreHorizontal,
   Star,
@@ -30,14 +31,16 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import Link from "next/link"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { Button } from "./ui/button";
 import { DeleteNoteItem } from "./deletenote-dialog";
 
-interface FavoriteNote {
-  id: string;
+interface RecentNote {
+  id: number;
   title: string;
 }
 
-async function fetchFavoriteNotes(): Promise<FavoriteNote[]> {
+async function fetchRecentNotes(): Promise<RecentNote[]> {
   try {
     const session = await getSession();
 
@@ -45,7 +48,7 @@ async function fetchFavoriteNotes(): Promise<FavoriteNote[]> {
       throw new Error("Access token not found, please login again.");
     }
 
-    const res = await fetch("https://note-iota-two.vercel.app/api/notes/pinned", {
+    const res = await fetch("https://note-iota-two.vercel.app/api/notes/sort-by-update", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${session.accessToken}`,
@@ -60,18 +63,18 @@ async function fetchFavoriteNotes(): Promise<FavoriteNote[]> {
     const data = await res.json();
     console.log("Note Response:", data);
 
-    return Array.isArray(data.data) ? data.data.slice(0, 7) : [];
+    return Array.isArray(data.data) ? data.data.slice(0, 5) : [];
   } catch (error) {
     console.error("Error fetching notes:", error);
     return [];
   }
 } 
 
-export function NavFavorites() {
+export function NavRecents() {
   const { isMobile } = useSidebar();
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [favoriteNotes, setFavoriteNotes] = useState<FavoriteNote[]>([]);
+  const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,11 +83,11 @@ export function NavFavorites() {
       }
     }, [status, router]);
 
-  const fetchFavoriteNotesData = useCallback(async () => {
+  const fetchRecentNotesData = useCallback(async () => {
       setLoading(true);
       try {
-        const data = await fetchFavoriteNotes();
-        setFavoriteNotes(data);
+        const data = await fetchRecentNotes();
+        setRecentNotes(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -93,11 +96,11 @@ export function NavFavorites() {
     }, []);
 
   useEffect(() => {
-    fetchFavoriteNotesData();
-  }, [fetchFavoriteNotesData]);
+    fetchRecentNotesData();
+  }, [fetchRecentNotesData]);
 
   const skeletons = useMemo(() => (
-    Array.from({ length: 8 }).map((_, i) => (
+    Array.from({ length: 5 }).map((_, i) => (
       <Skeleton key={i} className="rounded-xl w-full h-5 bg-gray-300 " />
     ))
   ), []);
@@ -105,16 +108,16 @@ export function NavFavorites() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
-        Favorites
+        Recents
       </SidebarGroupLabel>
       <SidebarMenu>
         { loading ? ( skeletons ) : (
-          favoriteNotes.map((favNote) => (
-            <SidebarMenuItem key={favNote.id}>
+          recentNotes.map((recNote) => (
+            <SidebarMenuItem key={recNote.id}>
               <SidebarMenuButton asChild>
-                <Link href={`/note/${favNote.id}`}>
-                  <span><Star className="size-4" strokeWidth={1.5}/></span>
-                  <span>{favNote.title}</span>
+                <Link href={`/note/${recNote.id}`}>
+                  <span><Clock className="size-4" strokeWidth={1.5}/></span>
+                  <span>{recNote.title}</span>
                 </Link>
               </SidebarMenuButton>
               <DropdownMenu>
@@ -130,11 +133,6 @@ export function NavFavorites() {
                   align={isMobile ? "end" : "start"}
                 >
                   <DropdownMenuItem>
-                    <StarOff className="text-neutral-500 dark:text-neutral-400" />
-                    <span>Remove from Favorites</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
                     <LinkIC className="text-neutral-500 dark:text-neutral-400" />
                     <span>Copy Link</span>
                   </DropdownMenuItem>
@@ -143,7 +141,7 @@ export function NavFavorites() {
                     <span>Open in New Tab</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DeleteNoteItem noteId={favNote.id.toString()} onNoteDeleted={fetchFavoriteNotesData}/>
+                  <DeleteNoteItem noteId={recNote.id.toString()} onNoteDeleted={fetchRecentNotesData}/>
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>

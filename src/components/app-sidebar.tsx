@@ -18,7 +18,7 @@ import {
 import { NavFavorites } from "@/components/nav-favorites"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
-import { NavWorkspaces } from "@/components/nav-workspaces"
+import { NavRecents } from "@/components/nav-recents"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
@@ -255,6 +255,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     email: session?.user?.email ?? "",
     avatar: "/image/ic_user.svg",
   }
+
+
   
   return (
     <Sidebar className="border-r-0" {...props}>
@@ -263,8 +265,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
-        <NavFavorites favorites={data.favorites} />
-        <NavWorkspaces workspaces={data.workspaces} />
+        <NavFavorites />
+        <NavRecents />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

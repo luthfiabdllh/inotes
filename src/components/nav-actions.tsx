@@ -36,8 +36,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import ToggleFavorite from "./toggle-favorite"
+// import ToggleFavorite from "./toggle-favorite"
 import { ShareDialog } from "./share-dialog"
+import { formatDistanceToNow } from "date-fns"
 
 const data = [
   [
@@ -56,7 +57,7 @@ const data = [
   ],
 ]
 
-export function NavActions() {
+export function NavActions({ updated_at }: { updated_at: string }) {
   const [isOpen, setIsOpen] = React.useState(false)
 
   React.useEffect(() => {
@@ -66,10 +67,10 @@ export function NavActions() {
   return (
     <div className="flex items-center gap-2 text-sm">
       <div className="hidden font-medium text-neutral-500 md:inline-block dark:text-neutral-400">
-        Edit Oct 08
+        {formatDistanceToNow(new Date(updated_at))}
       </div>
       <ShareDialog />
-      <ToggleFavorite/>
+      {/* <ToggleFavorite /> */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button

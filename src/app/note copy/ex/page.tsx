@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar"
 import Editor from "@/components/editor/editor"
 import { HeaderNote } from "@/components/header-note"
@@ -20,9 +22,8 @@ export default function Note() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <HeaderNote />
-        <Editor />
-        
+        {/* <HeaderNote /> */}
+        {/* <Editor /> */}
       </SidebarInset>
     </SidebarProvider>
   )
