@@ -104,7 +104,6 @@ export const Editor: React.FC<EditorProps> = ({ data, readOnly, noteId }) => {
           setDebounceTimeout(newTimeout);
         },
       });
-
       editorRef.current = editor;
     }
 

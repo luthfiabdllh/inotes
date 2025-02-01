@@ -13,7 +13,7 @@ import { use, useCallback, useEffect, useState } from "react";
 type Note = {
   id: string;
   title: string;
-  content: { blocks: Array<any> }
+  content: { blocks: Array<any> };
   is_pinned: boolean;
   created_at: string;
   updated_at: string;
@@ -21,7 +21,6 @@ type Note = {
 };
 
 export default function Note({ params }: { params: Promise<{ id: string }> }) {
-// export default function Note() {
   const unwrappedParams = use(params);
   const noteId = unwrappedParams?.id;
   const { data: session, status } = useSession();
@@ -39,6 +38,7 @@ export default function Note({ params }: { params: Promise<{ id: string }> }) {
     setLoading(true);
     try {
       const data = await fetchNoteDetail(noteId);
+      console.log("Fetched note data:", data.data);
       setNote(data.data || []);
     } catch (error) {
       console.error(error);
@@ -51,12 +51,16 @@ export default function Note({ params }: { params: Promise<{ id: string }> }) {
     fetchNotesData();
   }, [fetchNotesData]);
 
-  console.log( "sadasd", note?.content.blocks);
-  console.log( "sadasd", note);
-  
+  useEffect(() => {
+    console.log("Note state updated:", note);
+  }, [note]);
+
+  const is_pinned = note ? note.is_pinned : false;
+
+  console.log("Note data:", note?.is_pinned);
   return (
     <SidebarInset>
-      <HeaderNote nameNote={note?.title || "Untitled"} updated_at={note?.updated_at || "1111-02-01T13:08:21.835+00:00"}/>
+      <HeaderNote is_pinned={is_pinned} noteId={note?.id || ""} nameNote={note?.title || "Untitled"} updated_at={note?.updated_at || "1111-02-01T13:08:21.835+00:00"}/>
       <Editor noteId={noteId} readOnly={false} data={note?.content.blocks || []}/>
     </SidebarInset>
   );

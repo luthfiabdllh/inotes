@@ -39,6 +39,7 @@ import {
 // import ToggleFavorite from "./toggle-favorite"
 import { ShareDialog } from "./share-dialog"
 import { formatDistanceToNow } from "date-fns"
+import { updateNote } from "@/services/note"
 
 const data = [
   [
@@ -57,12 +58,26 @@ const data = [
   ],
 ]
 
-export function NavActions({ updated_at }: { updated_at: string }) {
-  const [isOpen, setIsOpen] = React.useState(false)
-
+export function NavActions({ noteId, updated_at, is_pinned }: { noteId : string ,updated_at: string, is_pinned: boolean }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [pinned, setPinned] = React.useState(is_pinned);
+  
   React.useEffect(() => {
     setIsOpen(false)
   }, [])
+
+  const togglePinned = async () => {
+    const newFavoriteStatus = !pinned;
+    setPinned(newFavoriteStatus);
+
+    try {
+      await updateNote(noteId, { is_pinned: newFavoriteStatus });
+    } catch (error) {
+      console.error("Failed to update favorite status:", error);
+      setPinned(pinned); 
+    }
+  };
+  
 
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -70,7 +85,9 @@ export function NavActions({ updated_at }: { updated_at: string }) {
         {formatDistanceToNow(new Date(updated_at))}
       </div>
       <ShareDialog />
-      {/* <ToggleFavorite /> */}
+      <button onClick={togglePinned} className="ml-2 text-gray-500 hover:text-yellow-500">
+        {pinned? <Star strokeWidth={0} className="w-5 h-5  fill-slate-500" /> : <Star  className="w-5 h-5" />}
+      </button>  
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
